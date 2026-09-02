@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Zelo · Voice Onboarding — Vision Walkthrough (v2)</title>
+<style>
+  @font-face{font-family:"Season Mix";src:url("assets/fonts/SeasonMix-Regular.woff2") format("woff2"),url("assets/fonts/SeasonMix-Regular.woff") format("woff");font-weight:400;font-style:normal;font-display:swap;}
+  @font-face{font-family:"Season Mix";src:url("assets/fonts/SeasonMix-Light.woff2") format("woff2"),url("assets/fonts/SeasonMix-Light.woff") format("woff");font-weight:300;font-style:normal;font-display:swap;}
+
+  :root{
+    --sand:#f4f3ee; --sand-2:#e8e7e2; --white:#ffffff;
+    --green:#103e2b; --green-link:#126844; --mint:#d9feef; --green-sel:#f7fffc;
+    --dark:#051710; --ink:#051710; --ink-2:#484e4c; --ink-3:#6d7170;
+    --success:#02a535; --alert:#f5b432; --alert-surface:#fff6e4; --error:#ee3133;
+    --border:#cdd8d4; --border-soft:#e2eeea; --border-bold:#abbeb8;
+    --font-display:"Season Mix", ui-serif, Georgia, serif;
+    --font-body:"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --shadow-card:0 1px 2px rgba(5,23,16,.05), 0 6px 20px rgba(5,23,16,.06);
+    --shadow-lift:0 10px 40px rgba(5,23,16,.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{font-family:var(--font-body);color:var(--ink);min-height:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    background:radial-gradient(1200px 600px at 80% -10%, rgba(217,254,239,.65), transparent 60%),radial-gradient(900px 500px at 0% 110%, rgba(16,62,43,.10), transparent 55%),linear-gradient(160deg, var(--sand) 0%, var(--sand-2) 100%);}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:26px 28px 40px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:22px;}
+  .brand{display:flex;align-items:center;gap:14px;}
+  .brand img{height:26px;display:block;}
+  .brand .divider{width:1px;height:26px;background:var(--border-bold);opacity:.7;}
+  .brand .kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--green-link);font-weight:600;}
+  .topbar .tag{font-size:12.5px;color:var(--ink-3);background:var(--white);border:1px solid var(--border-soft);padding:7px 12px;border-radius:999px;}
+  .headline{margin:0 0 4px;font-family:var(--font-display);font-weight:400;font-size:33px;line-height:1.1;letter-spacing:-.01em;color:var(--green);}
+  .subhead{margin:0 0 26px;color:var(--ink-2);font-size:15.5px;max-width:64ch;}
+
+  .stage{display:grid;grid-template-columns:minmax(340px,380px) 1fr;gap:44px;align-items:start;}
+
+  .phone-col{display:flex;flex-direction:column;align-items:center;}
+  .phone{position:relative;width:378px;height:790px;border-radius:52px;background:linear-gradient(160deg,#0a2318,#051710 60%);padding:13px;box-shadow:var(--shadow-lift), inset 0 0 0 2px rgba(217,254,239,.06);}
+  .phone::before{content:"";position:absolute;top:20px;left:50%;transform:translateX(-50%);width:104px;height:26px;background:#040f0a;border-radius:999px;z-index:6;}
+  .screen{position:relative;width:100%;height:100%;border-radius:40px;overflow:hidden;background:linear-gradient(180deg,#ffffff 0%, var(--green-sel) 100%);display:flex;flex-direction:column;}
+
+  .app-top{position:relative;z-index:3;padding:34px 20px 12px;display:flex;align-items:center;gap:13px;background:linear-gradient(180deg, rgba(217,254,239,.5), rgba(255,255,255,0));}
+  .avatar{width:52px;height:52px;border-radius:999px;flex:none;background:radial-gradient(circle at 30% 25%, #7bbf9f, #2f6b4e);box-shadow:0 0 0 3px #fff, 0 0 0 5px rgba(16,62,43,.14);display:flex;align-items:center;justify-content:center;color:#eafff5;font-family:var(--font-display);font-size:22px;}
+  .person-meta{flex:1;min-width:0;}
+  .person-meta .row1{display:flex;align-items:center;gap:8px;}
+  .person-name{font-family:var(--font-display);font-size:22px;color:var(--ink);line-height:1;}
+  .live-dot{width:7px;height:7px;border-radius:99px;background:var(--success);box-shadow:0 0 0 4px rgba(2,165,53,.16);animation:pulseDot 2s infinite;}
+  @keyframes pulseDot{50%{box-shadow:0 0 0 7px rgba(2,165,53,0);}}
+  .person-sub{font-size:12.5px;color:var(--ink-3);margin-top:3px;}
+  .time-chip{font-size:11.5px;color:var(--green);background:var(--mint);border-radius:999px;padding:5px 10px;font-weight:600;white-space:nowrap;}
+  [data-mode="home"] .time-chip{display:none;}
+
+  .canvas{flex:1;overflow-y:auto;padding:8px 18px 8px;scroll-behavior:smooth;}
+  .canvas::-webkit-scrollbar{width:0;}
+  .group{margin-bottom:15px;}
+  .group-head{display:flex;align-items:center;gap:8px;margin:2px 2px 9px;}
+  .group-head .gt{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:700;}
+  .group-head .ct{font-size:11px;color:var(--green);background:var(--mint);border-radius:99px;padding:1px 8px;font-weight:700;}
+  .group-head .line{flex:1;height:1px;background:var(--border-soft);}
+
+  .card{background:var(--white);border:1px solid var(--border-soft);border-radius:16px;padding:12px 13px;display:flex;align-items:center;gap:12px;margin-bottom:9px;box-shadow:var(--shadow-card);position:relative;}
+  .card .ic{width:38px;height:38px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--green-sel);color:var(--green);border:1px solid var(--border-soft);}
+  .card .ic svg{width:20px;height:20px;}
+  .card .body{flex:1;min-width:0;}
+  .card .t{font-size:15px;color:var(--ink);font-weight:600;line-height:1.15;}
+  .card .m{font-size:12.5px;color:var(--ink-3);margin-top:2px;}
+  .card .saved{width:22px;height:22px;border-radius:99px;background:var(--success);flex:none;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px rgba(2,165,53,.12);}
+  .card .saved svg{width:13px;height:13px;color:#fff;}
+  .card.gap .ic{background:var(--alert-surface);color:#a9791a;border-color:#f6e2b0;}
+  .card .gap-tag{font-size:11px;color:#8a6a12;background:var(--alert-surface);border:1px solid #f6e2b0;border-radius:99px;padding:2px 8px;font-weight:700;}
+  .card.enter{animation:cardIn .6s cubic-bezier(.16,1,.3,1) both;}
+  @keyframes cardIn{0%{opacity:0;transform:translateY(14px) scale(.96);}60%{opacity:1;}100%{opacity:1;transform:none;}}
+  .card.enter .saved{animation:savedPop .5s .26s cubic-bezier(.2,1.6,.4,1) both;}
+  @keyframes savedPop{0%{transform:scale(0);}100%{transform:scale(1);}}
+
+  .scan{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--green-link);background:rgba(217,254,239,.55);border:1px dashed var(--border-bold);border-radius:12px;padding:9px 11px;margin:2px 0 10px;}
+  .scan .spin{width:13px;height:13px;border-radius:99px;border:2px solid var(--border-bold);border-top-color:var(--green-link);animation:spin 1s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .scan.warn{color:#8a6a12;background:var(--alert-surface);border:1px solid #f6e2b0;}
+  .scan.warn svg{width:15px;height:15px;flex:none;}
+  .scan.enter{animation:cardIn .5s cubic-bezier(.16,1,.3,1) both;}
+
+  .convo{padding:6px 18px 4px;z-index:3;}
+  [data-mode="home"] .convo{display:none;}
+  .turn{margin-bottom:8px;}
+  .turn .who{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:3px;}
+  .turn.you .who{color:var(--ink-3);}
+  .turn.zelo .who{color:var(--green-link);}
+  .turn .said{font-size:14.5px;line-height:1.42;margin:0;}
+  .turn.you .said{color:var(--ink-2);}
+  .turn.zelo .said{color:var(--ink);font-weight:500;}
+  .cursor{display:inline-block;width:2px;height:1em;background:var(--green);vertical-align:-2px;margin-left:1px;animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  .dock{position:relative;padding:8px 18px 22px;display:flex;flex-direction:column;align-items:center;gap:12px;background:linear-gradient(0deg, rgba(217,254,239,.5), rgba(255,255,255,0));}
+  [data-mode="home"] .dock{display:none;}
+  .aura{position:relative;width:74px;height:74px;display:flex;align-items:center;justify-content:center;}
+  .aura .core{width:58px;height:58px;border-radius:99px;position:relative;z-index:2;background:radial-gradient(circle at 35% 30%, #eafff6, #a5eccd 45%, #3f9a72 100%);box-shadow:0 6px 18px rgba(16,62,43,.28), inset 0 0 12px rgba(255,255,255,.6);animation:breathe 3.4s ease-in-out infinite;}
+  @keyframes breathe{50%{transform:scale(1.06);}}
+  .aura .ring{position:absolute;inset:0;border-radius:99px;border:1.5px solid rgba(63,154,114,.5);opacity:0;}
+  .dock[data-voice="listening"] .ring{animation:ripple 2.2s ease-out infinite;}
+  .dock[data-voice="listening"] .ring:nth-child(2){animation-delay:.7s;}
+  .dock[data-voice="listening"] .ring:nth-child(3){animation-delay:1.4s;}
+  @keyframes ripple{0%{transform:scale(1);opacity:.6;}100%{transform:scale(1.7);opacity:0;}}
+  .dock[data-voice="speaking"] .core{animation:breathe 1.1s ease-in-out infinite;background:radial-gradient(circle at 35% 30%, #f4fff9, #8fe6c2 40%, #2f7d59 100%);}
+  .bars{position:absolute;bottom:-2px;display:flex;gap:3px;align-items:flex-end;height:16px;opacity:0;transition:opacity .3s;}
+  .dock[data-voice="speaking"] .bars{opacity:1;}
+  .bars i{width:3px;background:var(--green);border-radius:99px;height:5px;animation:eq .9s ease-in-out infinite;}
+  .bars i:nth-child(2){animation-delay:.15s;} .bars i:nth-child(3){animation-delay:.3s;} .bars i:nth-child(4){animation-delay:.45s;} .bars i:nth-child(5){animation-delay:.1s;}
+  @keyframes eq{0%,100%{height:5px;}50%{height:15px;}}
+  .dock[data-voice="thinking"] .core{animation:breathe 2s ease-in-out infinite;filter:saturate(.7) brightness(1.02);}
+  .voice-status{font-size:13px;color:var(--ink-2);min-height:18px;font-weight:500;}
+  .controls-row{display:flex;align-items:center;gap:14px;}
+  .cbtn{width:46px;height:46px;border-radius:99px;border:1px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;color:var(--ink-2);box-shadow:var(--shadow-card);}
+  .cbtn svg{width:20px;height:20px;}
+  .cbtn.mic{width:58px;height:58px;background:var(--green);border-color:var(--green);color:#eafff5;box-shadow:0 8px 22px rgba(16,62,43,.32);}
+
+  .composer{display:none;align-items:center;gap:10px;padding:12px 16px 20px;background:linear-gradient(0deg, rgba(217,254,239,.5), rgba(255,255,255,0));}
+  [data-mode="home"] .composer{display:flex;}
+  .composer .field{flex:1;background:var(--white);border:1px solid var(--border);border-radius:99px;padding:13px 16px;color:var(--ink-3);font-size:14px;box-shadow:var(--shadow-card);}
+  .composer .mini-mic{width:44px;height:44px;border-radius:99px;background:var(--green);color:#eafff5;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 6px 16px rgba(16,62,43,.28);}
+  .composer .mini-mic svg{width:19px;height:19px;}
+
+  .home-hi{font-family:var(--font-display);font-size:19px;color:var(--ink);margin:4px 2px 12px;line-height:1.3;}
+  .summary{display:flex;align-items:center;gap:12px;background:var(--white);border:1px solid var(--border-soft);border-radius:16px;padding:13px;margin-bottom:18px;box-shadow:var(--shadow-card);}
+  .summary .av{width:40px;height:40px;border-radius:99px;flex:none;background:radial-gradient(circle at 30% 25%, #7bbf9f, #2f6b4e);display:flex;align-items:center;justify-content:center;color:#eafff5;font-family:var(--font-display);font-size:17px;}
+  .summary .t{font-size:14.5px;font-weight:600;}
+  .summary .m{font-size:12.5px;color:var(--ink-3);margin-top:2px;}
+  .summary .chev{color:var(--ink-3);}
+  .hsec{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin:0 2px 9px;}
+  .feature{background:var(--white);border:1px solid var(--border-soft);border-radius:18px;padding:15px;box-shadow:var(--shadow-card);margin-bottom:14px;position:relative;overflow:hidden;}
+  .feature::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--green);}
+  .feature .ftop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;}
+  .feature .ftitle{font-size:16px;font-weight:700;display:flex;align-items:center;gap:9px;}
+  .feature .ftitle .ic{width:32px;height:32px;border-radius:9px;background:var(--green-sel);border:1px solid var(--border-soft);color:var(--green);display:flex;align-items:center;justify-content:center;}
+  .feature .ftitle .ic svg{width:18px;height:18px;}
+  .saved-chip{font-size:11px;font-weight:700;color:var(--success);background:rgba(2,165,53,.1);border-radius:99px;padding:4px 9px;display:inline-flex;align-items:center;gap:5px;}
+  .saved-chip svg{width:11px;height:11px;}
+  .feature .fmeta{font-size:13px;color:var(--ink-3);margin:0 0 12px;}
+  .frow{display:flex;gap:9px;}
+  .fbtn{flex:1;text-align:center;padding:11px;border-radius:12px;font-size:14px;font-weight:600;border:1px solid transparent;}
+  .fbtn.primary{background:var(--green);color:var(--sand);}
+  .fbtn.ghost{background:var(--white);color:var(--ink-2);border-color:var(--border);flex:0 0 auto;padding:11px 16px;}
+  .finish{background:rgba(255,246,228,.6);border:1px solid #f6e2b0;border-radius:14px;padding:12px 13px;}
+  .finish .fh{font-size:12.5px;font-weight:700;color:#8a6a12;margin-bottom:8px;}
+  .finish .fi{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--ink-2);padding:5px 0;}
+  .finish .fi .d{width:15px;height:15px;border-radius:5px;border:1.5px solid #d9b866;flex:none;}
+
+  .sheet{position:absolute;left:0;right:0;bottom:0;z-index:8;transform:translateY(102%);transition:transform .5s cubic-bezier(.16,1,.3,1);pointer-events:none;}
+  .sheet.show{transform:translateY(0);pointer-events:auto;}
+  .sheet .scrim{position:absolute;left:0;right:0;bottom:0;height:1000px;background:rgba(5,23,16,.20);opacity:0;transition:opacity .45s;z-index:-1;}
+  .sheet.show .scrim{opacity:1;}
+  .sheet-card{background:var(--white);border-radius:26px 26px 0 0;padding:20px 20px 24px;box-shadow:0 -12px 40px rgba(5,23,16,.2);max-height:560px;overflow-y:auto;border-top:1px solid var(--border-soft);}
+  .sheet-card::-webkit-scrollbar{width:0;}
+  .grip{width:38px;height:4px;border-radius:99px;background:var(--border);margin:0 auto 14px;}
+  .sheet .sk{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--green-link);font-weight:700;margin-bottom:6px;}
+  .sheet h3{font-family:var(--font-display);font-weight:400;font-size:21px;margin:0 0 4px;color:var(--ink);}
+  .sheet p.lead{font-size:14px;color:var(--ink-2);line-height:1.45;margin:0 0 16px;}
+  .btn{display:block;width:100%;text-align:center;padding:14px;border-radius:14px;font-size:15px;font-weight:600;font-family:var(--font-body);border:1px solid transparent;margin-top:9px;}
+  .btn.primary{background:var(--green);color:var(--sand);}
+  .btn.ghost{background:var(--white);color:var(--ink-2);border-color:var(--border);}
+  .fineprint{font-size:12px;color:var(--ink-3);text-align:center;margin-top:12px;}
+  .office{display:flex;align-items:center;gap:12px;background:var(--green-sel);border:1px solid var(--border-soft);border-radius:14px;padding:13px;margin-bottom:6px;}
+  .office .ic{width:42px;height:42px;border-radius:11px;background:var(--white);border:1px solid var(--border-soft);display:flex;align-items:center;justify-content:center;color:var(--green);}
+  .office .ic svg{width:22px;height:22px;}
+  .office .t{font-size:15px;font-weight:600;}
+  .office .m{font-size:12.5px;color:var(--green-link);margin-top:1px;display:flex;align-items:center;gap:5px;}
+  .optrow{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid var(--border-soft);border-radius:14px;margin-top:10px;}
+  .optrow .ic{width:40px;height:40px;border-radius:11px;background:var(--green-sel);border:1px solid var(--border-soft);color:var(--green);display:flex;align-items:center;justify-content:center;flex:none;}
+  .optrow .ic svg{width:20px;height:20px;}
+  .optrow .t{font-size:14px;font-weight:600;}
+  .optrow .m{font-size:12px;color:var(--ink-3);margin-top:1px;}
+  .optrow .add{font-size:13px;font-weight:700;color:var(--green);border:1px solid var(--green);border-radius:99px;padding:7px 13px;white-space:nowrap;}
+
+  .brief-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px;}
+  .brief-when{font-size:12.5px;color:var(--ink-3);text-align:right;}
+  .brief-sec{margin-bottom:14px;}
+  .brief-sec .h{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:8px;}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;}
+  .chip{font-size:12.5px;padding:6px 11px;border-radius:99px;background:var(--green-sel);border:1px solid var(--border-soft);color:var(--ink);font-weight:500;}
+  .chip.focus{background:var(--green);color:var(--sand);border-color:var(--green);}
+  .chip.gap{background:var(--alert-surface);border-color:#f6e2b0;color:#8a6a12;}
+  .qlist{margin:0;padding:0;list-style:none;}
+  .qlist li{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-soft);font-size:14px;color:var(--ink);line-height:1.35;}
+  .qlist li:last-child{border-bottom:0;}
+  .qlist .qn{flex:none;width:22px;height:22px;border-radius:99px;background:var(--mint);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+  .legend{display:flex;gap:16px;font-size:11.5px;color:var(--ink-3);margin:2px 0 12px;}
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .legend .d{width:9px;height:9px;border-radius:99px;}
+  .earn{display:flex;align-items:center;gap:11px;background:var(--mint);border-radius:14px;padding:12px 13px;margin-top:2px;}
+  .earn .txt{flex:1;font-size:13px;color:var(--green);font-weight:500;line-height:1.35;}
+  .earn .go{font-size:13px;font-weight:700;color:var(--green);white-space:nowrap;border:1px solid var(--green);border-radius:99px;padding:7px 13px;}
+
+  .narr{position:sticky;top:24px;}
+  .chapter{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--green-link);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+  .chapter .num{background:var(--green);color:var(--sand);border-radius:99px;font-size:12px;padding:3px 10px;letter-spacing:.04em;}
+  .narr h2{font-family:var(--font-display);font-weight:400;font-size:29px;line-height:1.12;margin:0 0 16px;color:var(--green);letter-spacing:-.01em;max-width:20ch;}
+  .note-k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:7px;}
+  .narr .note{font-size:16px;line-height:1.6;color:var(--ink-2);max-width:46ch;margin:0 0 22px;}
+  .principle{display:inline-flex;align-items:center;gap:10px;background:var(--white);border:1px solid var(--border-soft);border-radius:14px;padding:12px 16px;box-shadow:var(--shadow-card);max-width:44ch;}
+  .principle .star{width:26px;height:26px;border-radius:8px;background:var(--mint);color:var(--green);flex:none;display:flex;align-items:center;justify-content:center;}
+  .principle .star svg{width:15px;height:15px;}
+  .principle b{font-size:14.5px;color:var(--ink);font-weight:600;line-height:1.3;}
+  .narr-fade{animation:narrIn .45s ease both;}
+  @keyframes narrIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  .transport{margin-top:30px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+  .tbtn{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-body);font-size:14px;font-weight:600;background:var(--white);border:1px solid var(--border);border-radius:99px;padding:11px 18px;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-card);transition:transform .12s ease, box-shadow .2s ease;}
+  .tbtn:hover{transform:translateY(-1px);box-shadow:var(--shadow-lift);}
+  .tbtn svg{width:16px;height:16px;}
+  .tbtn.play{background:var(--green);color:var(--sand);border-color:var(--green);}
+  .tbtn.ghost{background:transparent;box-shadow:none;border-color:var(--border-bold);}
+  .dots{display:flex;gap:7px;margin-top:16px;flex-wrap:wrap;}
+  .dot{width:9px;height:9px;border-radius:99px;background:var(--border-bold);cursor:pointer;transition:all .2s;}
+  .dot.on{background:var(--green);width:24px;}
+  .counter{font-size:13px;color:var(--ink-3);margin-left:auto;font-variant-numeric:tabular-nums;}
+  .hint{font-size:12px;color:var(--ink-3);margin-top:14px;}
+
+  @media (max-width:960px){.stage{grid-template-columns:1fr;gap:34px;justify-items:center;}.narr{position:static;}.narr h2,.narr .note,.principle{max-width:none;}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand"><img src="assets/logo-full.svg" alt="Zelo" /><span class="divider"></span><span class="kicker">Voice Onboarding · v2</span></div>
+      <span class="tag">Concept mockup · vision walkthrough · not live product</span>
+    </div>
+
+    <h1 class="headline">Talk for a few minutes. Walk away with your mom's care in one place.</h1>
+    <p class="subhead">A portal-free first session. Sarah talks, the picture fills in, and she leaves with a visit prep, reminders, and tasks that stay saved. The notes on the right explain each choice.</p>
+
+    <div class="stage">
+      <div class="phone-col">
+        <div class="phone"><div class="screen" id="screen" data-mode="voice">
+          <div class="app-top">
+            <div class="avatar">M</div>
+            <div class="person-meta">
+              <div class="row1"><span class="person-name">Margaret</span><span class="live-dot"></span></div>
+              <div class="person-sub" id="psub">Building her care picture</div>
+            </div>
+            <span class="time-chip" id="timechip">about 4 min</span>
+          </div>
+
+          <div class="canvas" id="canvas"></div>
+          <div class="convo" id="convo"></div>
+
+          <div class="dock" id="dock" data-voice="idle">
+            <div class="aura"><span class="ring"></span><span class="ring"></span><span class="ring"></span><span class="core"></span><span class="bars"><i></i><i></i><i></i><i></i><i></i></span></div>
+            <div class="voice-status" id="vstatus">Tap to talk</div>
+            <div class="controls-row">
+              <div class="cbtn" title="Type instead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg></div>
+              <div class="cbtn mic" title="Voice on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></div>
+              <div class="cbtn" title="Pause"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 5v14M18 5v14"/></svg></div>
+            </div>
+          </div>
+
+          <div class="composer" id="composer">
+            <div class="field">Message Zelo</div>
+            <div class="mini-mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></div>
+          </div>
+
+          <div class="sheet" id="sheet"><div class="scrim"></div><div class="sheet-card" id="sheetCard"></div></div>
+        </div></div>
+      </div>
+
+      <div class="narr">
+        <div id="narrInner">
+          <div class="chapter"><span class="num" id="chNum">00</span><span id="chName"></span></div>
+          <h2 id="nTitle"></h2>
+          <div class="note-k">Design note</div>
+          <p class="note" id="nNote"></p>
+          <div class="principle"><span class="star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21.6 9 15.8 13.2 18 20l-6-4.2L6 20l2.2-6.8L2.4 9l7.2-.1z"/></svg></span><b id="nPrinciple"></b></div>
+        </div>
+        <div class="transport">
+          <button class="tbtn ghost" id="prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Back</button>
+          <button class="tbtn play" id="play"><svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span id="playLbl">Play walkthrough</span></button>
+          <button class="tbtn ghost" id="next">Next<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+          <span class="counter"><span id="cNow">1</span> / <span id="cTot">11</span></span>
+        </div>
+        <div class="dots" id="dots"></div>
+        <div class="hint">Use ← → to step through · Space to play/pause · tap any dot to jump.</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const I = {
+  condition:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l2 5 4-12 2 7h4"/></svg>',
+  lab:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6l-5 8a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-8V3"/><path d="M7 15h10"/></svg>',
+  doctor:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
+  appt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>',
+  task:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>',
+  med:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="8" rx="4" transform="rotate(-45 12 12)"/><path d="M8.5 8.5l7 7"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+  building:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 8h.01M15 8h.01M9 12h.01M15 12h.01M9 21v-4h6v4"/></svg>',
+  cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4M8 14h3"/></svg>',
+  warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>',
+  chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>'
+};
+
+const CARDS = [
+  {group:'conditions', beat:1, icon:'condition', t:'Diabetes',            m:'Added by you'},
+  {group:'conditions', beat:1, icon:'condition', t:'High blood pressure', m:'Added by you'},
+  {group:'conditions', beat:1, icon:'condition', t:'Knee arthritis',      m:'Added by you'},
+  {group:'labs',       beat:2, icon:'lab',    t:'Blood test · Dr. Patel',  m:'Add result or photo', gap:true},
+  {group:'care',       beat:3, icon:'doctor', t:'Dr. Chen',  m:'Regular doctor'},
+  {group:'care',       beat:3, icon:'doctor', t:'Dr. Patel', m:'Diabetes'},
+  {group:'appts',      beat:6, icon:'appt', t:'Visit · Dr. Patel', m:'Thursday, Sep 3 · 10:30 AM'},
+  {group:'tasks',      beat:6, icon:'task', t:'Refill metformin',   m:'Due in 3 days'},
+  {group:'meds',       beat:8, icon:'med', t:'Metformin',  m:'For diabetes'},
+  {group:'meds',       beat:8, icon:'med', t:'Lisinopril', m:'For blood pressure'},
+  {group:'meds',       beat:8, icon:'med', t:'Statin · name?', m:'Add the name', gap:true},
+];
+const GROUPS = [
+  {key:'conditions', label:'Conditions'},
+  {key:'labs',       label:'Lab results'},
+  {key:'care',       label:'Care team'},
+  {key:'appts',      label:'Appointments'},
+  {key:'tasks',      label:'Tasks'},
+  {key:'meds',       label:'Medications'},
+];
+
+const B = [
+  { mode:'voice', ch:'The start', title:'Zelo suggests. Sarah decides.',
+    note:'We open on her mom and one plain offer. Zelo suggests a place to start, then hands Sarah the wheel. There is no list of required steps to work through.',
+    principle:'Suggest a start. Don’t script the conversation.',
+    time:'about 4 min', voice:'speaking',
+    zelo:'Hi Sarah. I’ll help you keep your mom’s care in one place. We can start with what she’s dealing with, or you can tell me what’s on your mind.'
+  },
+  { mode:'voice', ch:'Conditions', title:'She talks, the picture fills in.',
+    note:'Three conditions become three saved cards. Zelo asks one useful follow-up, not a checklist, and only because the answer helps later.',
+    principle:'One good follow-up beats ten questions.',
+    time:'3 min left', voice:'listening',
+    you:'Okay. She has diabetes, high blood pressure, and bad arthritis in her knees.',
+    zelo:'Got it. Is anyone treating her diabetes, like a specialist?'
+  },
+  { mode:'voice', ch:'She redirects', title:'Sarah changes the subject. Zelo follows.',
+    note:'She raises a lab result she is worried about. A Lab results section appears because she brought it up, not because we asked. Zelo saves it, offers a way to handle it, and keeps her in control.',
+    principle:'Go where the caregiver goes.',
+    time:'3 min left', voice:'listening',
+    you:'Yeah, Dr. Patel. Actually, her doctor called about a blood test and I’m worried about it.',
+    zelo:'Let’s put that here so we don’t lose it. You can add the result now or snap a photo later. When you’re ready, I can help you ask about it at her next visit.'
+  },
+  { mode:'voice', ch:'Care team', title:'Naming her doctors does quiet work.',
+    note:'Zelo suggests adding her doctors and says why it helps. In the background it checks whether those offices connect for records, so Sarah never has to go hunting.',
+    principle:'Every question earns its place.',
+    time:'2 min left', voice:'listening',
+    you:'Sure. Dr. Chen is her regular doctor. Dr. Patel handles the diabetes.',
+    zelo:'Added both to her team. One sec while I check their offices.',
+    scan:'Checking if their offices connect with Zelo'
+  },
+  { mode:'voice', ch:'The offer', title:'The portal shows up as a shortcut.',
+    note:'Zelo offers to pull records so Sarah types less. It is optional, low-stakes, and only appears because the connection is real. Today we ask for this first, before any value, and people leave.',
+    principle:'Records save typing. They are optional.',
+    time:'2 min left', voice:'speaking',
+    zelo:'Good news. Dr. Chen’s office connects with Zelo. If we link it, I can pull your mom’s records so you don’t have to type them. Want to try?',
+    sheet:'portal'
+  },
+  { mode:'voice', ch:'It fails', title:'It fails, and nothing breaks.',
+    note:'The connection hiccups, the same wall that ends sessions today. Zelo stays calm, blames the system, and keeps every card on screen. Sarah can see nothing was lost.',
+    principle:'A failed connection never ends the session.',
+    time:'2 min left', voice:'speaking',
+    zelo:'That portal isn’t cooperating right now. That happens, and it’s not on you. We’ve got plenty to work with. Let’s keep going.',
+    notice:'Couldn’t reach Dr. Chen’s office. Nothing lost, we’ll try later.'
+  },
+  { mode:'voice', ch:'Appointment & task', title:'A mention becomes a saved task.',
+    note:'Sarah mentions a visit and a refill. Both become saved items she can see: the appointment on her calendar, the refill on her list. Nothing is buried under an overlay.',
+    principle:'Turn talk into things she can act on.',
+    time:'1 min left', voice:'listening',
+    you:'She has a follow-up with Dr. Patel this Thursday. And I keep forgetting to refill her metformin.',
+    zelo:'Added both. Thursday’s visit is on her calendar and the refill is on your list.'
+  },
+  { mode:'voice', ch:'Reminders', title:'Reminders arrive with the task, not before.',
+    note:'Now that a real task and a real appointment are on screen, the reminder offer makes sense. Zelo also offers to sync her calendar. We ask for permission when the reason is sitting right in front of her.',
+    principle:'Ask permission when the payoff is visible.',
+    time:'1 min left', voice:'speaking',
+    zelo:'Want me to remind you about these, so they don’t slip? I’ll only reach out when it matters.',
+    sheet:'notify'
+  },
+  { mode:'voice', ch:'Medications', title:'Zelo stops before she gets tired.',
+    note:'A few meds, then Zelo offers the easy path for the rest: a photo later. It leaves one item open on purpose, rather than push for more.',
+    principle:'Knowing when to stop is part of the job.',
+    time:'wrapping up', voice:'listening',
+    you:'She takes metformin, lisinopril, and some kind of statin.',
+    zelo:'Saved. You can add the rest anytime, or take a photo of her pill bottles and I’ll read them.'
+  },
+  { mode:'voice', ch:'The next step', title:'The summary is offered, not sprung.',
+    note:'Zelo offers a visit summary as a next step and reviews it with her. It produces questions for the doctor, never advice. It saves in the app, and sharing is just one option.',
+    principle:'Offer the next step. Let her choose it.',
+    time:'ready', voice:'speaking',
+    zelo:'One more thing. Your mom sees Dr. Patel on Thursday. I put together a short summary for that visit. Want to look at it together, so she’s ready?',
+    sheet:'brief'
+  },
+  { mode:'home', ch:'Home', title:'The picture makes room for what’s next.',
+    note:'Once built, the care picture folds into a summary. The space goes to what Sarah will act on: the visit prep, the appointment, the task. Everything is saved and labeled, so nothing looks like it will disappear.',
+    principle:'Saved and easy to find, never ephemeral.',
+    time:'saved', voice:'idle',
+    zelo:''
+  },
+];
+
+const $ = s => document.querySelector(s);
+const screen=$('#screen'), canvas=$('#canvas'), convo=$('#convo'), dock=$('#dock'), vstatus=$('#vstatus'),
+      sheet=$('#sheet'), sheetCard=$('#sheetCard'), timechip=$('#timechip'), psub=$('#psub');
+let idx=0, seq=0, playing=false, timer=null;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function stopTimer(){ if(timer){ clearTimeout(timer); timer=null; } }
+
+function sheetHTML(kind){
+  if(kind==='portal') return `
+    <div class="grip"></div><div class="sk">Records connection found</div>
+    <h3>Skip the typing?</h3>
+    <p class="lead">Linking Dr. Chen’s office lets Zelo pull your mom’s records, so you don’t have to enter them by hand.</p>
+    <div class="office"><div class="ic">${I.building}</div><div><div class="t">Dr. Chen’s Office</div><div class="m"><span class="live-dot"></span> Connection available</div></div></div>
+    <div class="btn primary">Connect Dr. Chen</div><div class="btn ghost">Maybe later</div>
+    <div class="fineprint">This is optional. If it doesn’t work, we keep going.</div>`;
+  if(kind==='notify') return `
+    <div class="grip"></div><div class="sk">One quick thing</div>
+    <h3>Want reminders?</h3>
+    <p class="lead">I’ll remind you about the metformin refill and Thursday’s visit. I’ll only reach out when it matters.</p>
+    <div class="btn primary">Turn on reminders</div>
+    <div class="optrow"><div class="ic">${I.cal}</div><div style="flex:1"><div class="t">Google Calendar</div><div class="m">Keep her appointments in sync with your calendar.</div></div><div class="add">Connect</div></div>
+    <div class="btn ghost">Not now</div>`;
+  if(kind==='brief') return `
+    <div class="grip"></div>
+    <div class="brief-head"><div><div class="sk" style="display:flex;align-items:center;gap:8px">Visit prep <span class="saved-chip">${I.check} Saved</span></div><h3 style="margin-top:6px">Dr. Patel</h3></div><div class="brief-when">Thursday<br>Sep 3, 10:30 AM</div></div>
+    <div class="brief-sec"><div class="h">What she’s managing</div><div class="chips"><span class="chip focus">Diabetes</span><span class="chip">Metformin</span><span class="chip">Lisinopril</span><span class="chip gap">Statin, name?</span></div></div>
+    <div class="brief-sec"><div class="h">Questions to ask</div><ul class="qlist">
+      <li><span class="qn">1</span><span>Should her metformin dose change based on her latest blood test?</span></li>
+      <li><span class="qn">2</span><span>Which statin is she on, and is it still the right one?</span></li>
+      <li><span class="qn">3</span><span>What did the blood test show, and does anything need a follow-up?</span></li>
+    </ul></div>
+    <div class="legend"><span><span class="d" style="background:var(--success)"></span>From you</span><span><span class="d" style="background:var(--alert)"></span>Still to fill in</span></div>
+    <div class="earn"><div class="txt">Want the real lab numbers in here? Connect Dr. Chen’s records when you have a couple of minutes.</div><div class="go">Connect</div></div>
+    <div class="btn primary" style="margin-top:12px">Looks good</div><div class="btn ghost">Share with family</div>`;
+  return '';
+}
+
+function renderHome(){
+  canvas.innerHTML=`
+    <div class="home-hi">Everything’s saved here. I’ll remind you about the refill. When you have a minute, we can add the rest of her meds and that blood test.</div>
+    <div class="summary"><div class="av">M</div><div style="flex:1"><div class="t">Margaret’s care picture</div><div class="m">3 conditions · 1 lab · 2 doctors · 3 meds</div></div><span class="chev">${I.chev}</span></div>
+    <div class="hsec">For Thursday</div>
+    <div class="feature">
+      <div class="ftop"><div class="ftitle"><span class="ic">${I.task}</span>Visit prep</div><span class="saved-chip">${I.check} Saved</span></div>
+      <p class="fmeta">Dr. Patel · Thursday, Sep 3 · 3 questions ready</p>
+      <div class="frow"><div class="fbtn primary">Open</div><div class="fbtn ghost">Share</div></div>
+    </div>
+    <div class="hsec">Coming up</div>
+    <div class="card"><div class="ic">${I.appt}</div><div class="body"><div class="t">Visit · Dr. Patel</div><div class="m">Thursday, Sep 3 · 10:30 AM · reminder on</div></div><span class="saved">${I.check}</span></div>
+    <div class="card"><div class="ic">${I.task}</div><div class="body"><div class="t">Refill metformin</div><div class="m">Due in 3 days · reminder on</div></div><span class="saved">${I.check}</span></div>
+    <div class="finish">
+      <div class="fh">Finish when you have a minute</div>
+      <div class="fi"><span class="d"></span>Add the name of her statin</div>
+      <div class="fi"><span class="d"></span>Add the blood test result from Dr. Patel</div>
+    </div>`;
+  requestAnimationFrame(()=>canvas.scrollTo({top:0,behavior:'auto'}));
+}
+
+function renderCanvas(beat, animate){
+  canvas.innerHTML='';
+  if(beat.mode==='home'){ renderHome(); return; }
+  GROUPS.forEach(g=>{
+    const cards=CARDS.filter(c=>c.group===g.key && c.beat<=idx);
+    if(!cards.length) return;
+    const gEl=document.createElement('div'); gEl.className='group';
+    gEl.innerHTML=`<div class="group-head"><span class="gt">${g.label}</span><span class="ct">${cards.length}</span><span class="line"></span></div>`;
+    cards.forEach((c,i)=>{
+      const el=document.createElement('div');
+      el.className='card'+(c.gap?' gap':'')+(animate && c.beat===idx?' enter':'');
+      if(animate && c.beat===idx) el.style.animationDelay=(i*90)+'ms';
+      el.innerHTML=`<div class="ic">${I[c.icon]}</div><div class="body"><div class="t">${c.t}</div><div class="m">${c.m}</div></div>${c.gap?'<span class="gap-tag">To add</span>':`<span class="saved">${I.check}</span>`}`;
+      gEl.appendChild(el);
+    });
+    canvas.appendChild(gEl);
+  });
+  if(beat.scan){ const s=document.createElement('div'); s.className='scan'+(animate?' enter':''); s.innerHTML=`<span class="spin"></span><span>${beat.scan}</span>`; canvas.appendChild(s); }
+  if(beat.notice){ const n=document.createElement('div'); n.className='scan warn'+(animate?' enter':''); n.innerHTML=`${I.warn}<span>${beat.notice}</span>`; canvas.appendChild(n); }
+  requestAnimationFrame(()=>canvas.scrollTo({top:canvas.scrollHeight,behavior:animate?'smooth':'auto'}));
+}
+
+function renderNarration(beat){
+  const inner=$('#narrInner');
+  $('#chNum').textContent=String(idx).padStart(2,'0');
+  $('#chName').textContent=beat.ch;
+  $('#nTitle').textContent=beat.title;
+  $('#nNote').textContent=beat.note;
+  $('#nPrinciple').textContent=beat.principle;
+  inner.classList.remove('narr-fade'); void inner.offsetWidth; inner.classList.add('narr-fade');
+}
+function setVoice(state,label){ dock.dataset.voice=state; if(label!=null) vstatus.textContent=label; }
+function updateDots(){ document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===idx)); $('#cNow').textContent=idx+1; }
+function updatePlayBtn(){
+  $('#playIcon').innerHTML = playing ? '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>' : '<path d="M8 5v14l11-7z"/>';
+  $('#playLbl').textContent = playing ? 'Pause' : (idx===B.length-1 ? 'Replay' : 'Play walkthrough');
+}
+
+async function typeInto(el,text,my,speed){
+  if(!el) return;
+  el.innerHTML=''; const cur=document.createElement('span'); cur.className='cursor';
+  for(let i=0;i<text.length;i++){ if(my!==seq) return; el.textContent=text.slice(0,i+1); el.appendChild(cur); await sleep(speed); }
+  if(my===seq && el.contains(cur)) cur.remove();
+}
+function buildConvo(beat){
+  convo.innerHTML='';
+  if(beat.mode==='home' || !beat.zelo) return;
+  if(beat.you){ const y=document.createElement('div'); y.className='turn you'; y.innerHTML=`<div class="who">Sarah</div><p class="said" id="youLine"></p>`; convo.appendChild(y); }
+  const z=document.createElement('div'); z.className='turn zelo'; z.innerHTML=`<div class="who">Zelo</div><p class="said" id="zeloLine"></p>`; convo.appendChild(z);
+}
+function applySheet(beat){
+  if(beat.sheet){ sheetCard.innerHTML=sheetHTML(beat.sheet); sheet.classList.add('show'); }
+  else sheet.classList.remove('show');
+}
+function applyStatic(beat, animate){
+  screen.dataset.mode=beat.mode;
+  timechip.textContent=beat.time;
+  psub.textContent = beat.mode==='home' ? 'Care picture · saved' : 'Building her care picture';
+  renderNarration(beat);
+  renderCanvas(beat, animate);
+  updateDots(); updatePlayBtn();
+}
+function fillInstant(beat){
+  const y=$('#youLine'); if(y && beat.you) y.textContent=beat.you;
+  const z=$('#zeloLine'); if(z && beat.zelo) z.textContent=beat.zelo;
+  applySheet(beat);
+  setVoice(beat.voice||'idle', beat.mode==='home' ? '' : (beat.you?'Listening…':'Tap to talk'));
+}
+async function animateBeat(beat, my){
+  if(!beat.sheet) sheet.classList.remove('show');
+  if(beat.mode==='home') return;
+  if(beat.you){ setVoice('listening','Listening…'); await typeInto($('#youLine'), beat.you, my, 20); if(my!==seq) return; await sleep(280); }
+  if(my!==seq) return;
+  setVoice('thinking','Zelo is thinking…'); await sleep(beat.you?420:250); if(my!==seq) return;
+  setVoice('speaking','Zelo is talking…'); await typeInto($('#zeloLine'), beat.zelo, my, 16); if(my!==seq) return;
+  if(beat.sheet){ await sleep(260); if(my!==seq) return; applySheet(beat); }
+  setVoice(beat.you?'listening':'idle','Tap to talk');
+}
+async function show(i, animate){
+  const my=++seq; stopTimer();
+  idx=Math.max(0,Math.min(B.length-1,i));
+  const beat=B[idx];
+  applyStatic(beat, animate);
+  buildConvo(beat);
+  if(!animate){ fillInstant(beat); return; }
+  await animateBeat(beat, my);
+  if(my!==seq) return;
+  if(playing){
+    if(idx<B.length-1){ timer=setTimeout(()=>{ if(my===seq && playing) show(idx+1, true); }, beat.sheet?3400:2500); }
+    else setPlaying(false);
+  }
+}
+function setPlaying(on){
+  playing=on; updatePlayBtn();
+  if(on){ if(idx>=B.length-1) idx=0; show(idx, true); }
+  else stopTimer();
+}
+function next(){ setPlaying(false); show(idx+1, false); }
+function prev(){ setPlaying(false); show(idx-1, false); }
+
+const dots=$('#dots');
+B.forEach((b,i)=>{ const d=document.createElement('span'); d.className='dot'; d.title=b.ch; d.onclick=()=>{ setPlaying(false); show(i,false); }; dots.appendChild(d); });
+$('#cTot').textContent=B.length;
+$('#next').onclick=e=>{ e.currentTarget.blur(); next(); };
+$('#prev').onclick=e=>{ e.currentTarget.blur(); prev(); };
+$('#play').onclick=e=>{ e.currentTarget.blur(); setPlaying(!playing); };
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'){ next(); }
+  else if(e.key==='ArrowLeft'){ prev(); }
+  else if(e.code==='Space'){ e.preventDefault(); setPlaying(!playing); }
+});
+show(0, false);
+</script>
+</body>
+</html>
